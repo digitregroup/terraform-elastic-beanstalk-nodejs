@@ -1,6 +1,6 @@
 {
   "name": "terraform-elastic-beanstalk-nodejs",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Terraform script to setup AWS Elastic Beanstalk with a load-balanced or Single Instance NodeJS app.",
   "main": "index.js",
   "scripts": {
