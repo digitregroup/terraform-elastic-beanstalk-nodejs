@@ -221,11 +221,7 @@ variable "node_cmd" {
   default = ""
   description = "Command used to start the Node.js application."
 }
-variable "node_version" {
-  type    = string
-  default = "10.15.1"
-  description = "Version of Node.js."
-}
+
 variable "proxy_server" {
   type    = string
   default = "none"
