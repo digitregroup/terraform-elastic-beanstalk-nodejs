@@ -68,6 +68,16 @@ resource "aws_iam_policy_attachment" "beanstalk_service_health" {
   roles = [aws_iam_role.beanstalk_service.id]
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"
 }
+resource "aws_iam_policy_attachment" "beanstalk_service_auto_scalling" {
+  name = "${var.service_name}-${var.env}-elastic-beanstalk-service-auto-scalling"
+  roles = [aws_iam_role.beanstalk_service.id]
+  policy_arn = "arn:aws:iam::aws:policy/AutoScalingFullAccess"
+}
+resource "aws_iam_policy_attachment" "beanstalk_service_load_balancing" {
+  name = "${var.service_name}-${var.env}-elastic-beanstalk-service-load-balancing"
+  roles = [aws_iam_role.beanstalk_service.id]
+  policy_arn = "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess"
+}
 resource "aws_iam_policy_attachment" "beanstalk_ec2_web" {
   name = "${var.service_name}-${var.env}-elastic-beanstalk-ec2-web"
   roles = [aws_iam_role.beanstalk_ec2.id]
