@@ -58,31 +58,108 @@ resource "aws_iam_role" "beanstalk_ec2" {
 }
 EOF
 }
-resource "aws_iam_policy_attachment" "beanstalk_service" {
-  name = "${var.service_name}-${var.env}-elastic-beanstalk-service"
-  roles = [aws_iam_role.beanstalk_service.id]
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService"
+
+
+##################################################
+## AutoScalingFullAccess policy
+##################################################
+data "aws_iam_policy" "AutoScalingFullAccess" {
+  arn = "arn:aws:iam::aws:policy/AutoScalingFullAccess"
 }
-resource "aws_iam_policy_attachment" "beanstalk_service_health" {
-  name = "${var.service_name}-${var.env}-elastic-beanstalk-service-health"
-  roles = [aws_iam_role.beanstalk_service.id]
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"
+resource "aws_iam_policy" "copyAutoScalingFullAccess" {
+  name        = "${var.service_name}-${var.env}-AutoScalingFullAccess"
+  path        = "/"
+  description = "Copy of the AWS Managed 'AutoScalingFullAccess', for ${var.service_name}-${var.env}"
+  policy = data.aws_iam_policy.AutoScalingFullAccess.policy
 }
-resource "aws_iam_policy_attachment" "beanstalk_service_auto_scalling" {
-  name = "${var.service_name}-${var.env}-elastic-beanstalk-service-auto-scalling"
-  roles = [aws_iam_role.beanstalk_service.id]
-  policy_arn = "arn:aws:iam::aws:policy/AutoScalingFullAccess"
+resource "aws_iam_policy_attachment" "auto-scaling-role-attach" {
+  name       = "${var.service_name}-${var.env}-enhanced-auto-scallin-attachment"
+  policy_arn = aws_iam_policy.copyAutoScalingFullAccess.arn
+  roles = [
+    aws_iam_role.beanstalk_service.id,
+  ]
 }
-resource "aws_iam_policy_attachment" "beanstalk_service_load_balancing" {
-  name = "${var.service_name}-${var.env}-elastic-beanstalk-service-load-balancing"
-  roles = [aws_iam_role.beanstalk_service.id]
-  policy_arn = "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess"
+
+##################################################
+## ElasticLoadBalancingFullAccess policy
+##################################################
+data "aws_iam_policy" "ElasticLoadBalancingFullAccess" {
+  arn = "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess"
 }
-resource "aws_iam_policy_attachment" "beanstalk_ec2_web" {
-  name = "${var.service_name}-${var.env}-elastic-beanstalk-ec2-web"
-  roles = [aws_iam_role.beanstalk_ec2.id]
-  policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
+resource "aws_iam_policy" "copyElasticLoadBalancingFullAccess" {
+  name        = "${var.service_name}-${var.env}-ElasticLoadBalancingFullAccess"
+  path        = "/"
+  description = "Copy of the AWS Managed 'ElasticLoadBalancingFullAccess', for ${var.service_name}-${var.env}"
+  policy = data.aws_iam_policy.ElasticLoadBalancingFullAccess.policy
 }
+resource "aws_iam_policy_attachment" "load-balancing-role-attach" {
+  name       = "${var.service_name}-${var.env}-enhanced-load-balancing-attachment"
+  policy_arn = aws_iam_policy.copyElasticLoadBalancingFullAccess.arn
+  roles = [
+    aws_iam_role.beanstalk_service.id,
+  ]
+}
+
+##################################################
+## AWSElasticBeanstalkService policy
+##################################################
+data "aws_iam_policy" "AWSElasticBeanstalkService" {
+  arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkService"
+}
+resource "aws_iam_policy" "copyAWSElasticBeanstalkService" {
+  name        = "${var.service_name}-${var.env}-AWSElasticBeanstalkService"
+  path        = "/"
+  description = "Copy of the AWS Managed 'AWSElasticBeanstalkService', for ${var.service_name}-${var.env}"
+  policy = data.aws_iam_policy.AWSElasticBeanstalkService.policy
+}
+resource "aws_iam_policy_attachment" "elastic-beanstalk-role-attach" {
+  name       = "${var.service_name}-${var.env}-enhanced-elastic-beanstalk-attachment"
+  policy_arn = aws_iam_policy.copyAWSElasticBeanstalkService.arn
+  roles = [
+    aws_iam_role.beanstalk_service.id,
+  ]
+}
+
+##################################################
+## AWSElasticBeanstalkEnhancedHealth policy
+##################################################
+data "aws_iam_policy" "AWSElasticBeanstalkEnhancedHealth" {
+  arn = "arn:aws:iam::aws:policy/service-role/AWSElasticBeanstalkEnhancedHealth"
+}
+resource "aws_iam_policy" "copyAWSElasticBeanstalkEnhancedHealth" {
+  name        = "${var.service_name}-${var.env}-AWSElasticBeanstalkEnhancedHealth"
+  path        = "/"
+  description = "Copy of the AWS Managed 'AWSElasticBeanstalkEnhancedHealth', for ${var.service_name}-${var.env}"
+  policy = data.aws_iam_policy.AWSElasticBeanstalkEnhancedHealth.policy
+}
+resource "aws_iam_policy_attachment" "elastic-health-role-attach" {
+  name       = "${var.service_name}-${var.env}-enhanced-elastic-health-attachment"
+  policy_arn = aws_iam_policy.copyAWSElasticBeanstalkEnhancedHealth.arn
+  roles = [
+    aws_iam_role.beanstalk_service.id,
+  ]
+}
+
+##################################################
+## AWSElasticBeanstalkWebTier policy
+##################################################
+data "aws_iam_policy" "AWSElasticBeanstalkWebTier" {
+  arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
+}
+resource "aws_iam_policy" "copyAWSElasticBeanstalkWebTier" {
+  name        = "${var.service_name}-${var.env}-AWSElasticBeanstalkWebTier"
+  path        = "/"
+  description = "Copy of the AWS Managed 'AWSElasticBeanstalkWebTier', for ${var.service_name}-${var.env}"
+  policy = data.aws_iam_policy.AWSElasticBeanstalkWebTier.policy
+}
+resource "aws_iam_policy_attachment" "elastic-webtier-role-attach" {
+  name       = "${var.service_name}-${var.env}-enhanced-elastic-webtier-attachment"
+  policy_arn = aws_iam_policy.copyAWSElasticBeanstalkWebTier.arn
+  roles = [
+    aws_iam_role.beanstalk_ec2.id,
+  ]
+}
+
 
 ##################################################
 ## Elastic Beanstalk
