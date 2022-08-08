@@ -39,6 +39,13 @@ variable "domain_name" {
   type    = string
   description = "Final Domain name associated to cloudfront"
 }
+
+variable "aliases" {
+  type    = list(string)
+  default = []
+  description = "Extra CNAMEs (alternate domain names)"
+}
+
 variable "origin_domain_name" {
   type    = string
   description = "Origin Domain name (in our case, the EB CNAME)"

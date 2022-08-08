@@ -50,7 +50,7 @@ resource "aws_cloudfront_distribution" "app_cdn" {
     }
   }
 
-  aliases             = [var.domain_name]
+  aliases             = var.aliases
   enabled             = var.enabled
   is_ipv6_enabled     = var.is_ipv6_enabled
   comment             = "${var.service_name} (${var.env})"
